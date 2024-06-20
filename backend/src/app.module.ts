@@ -6,7 +6,7 @@ import { WishModule } from './wish/wish.module';
 import { UserModule } from './user/user.module';
 import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
-
+import config from 'config';
 @Module({
   imports: [
     AuthModule,
@@ -14,20 +14,16 @@ import { AuthModule } from './auth/auth.module';
     WishModule,
     UserModule,
     OffersModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
-        synchronize: false,
-        entities: [__dirname + '/**/*.entity{.js, .ts}'],
-      }),
-      inject: [ConfigService],
+    ConfigModule.forRoot({ load: [config] }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: config().database.host,
+      port: config().database.port,
+      username: config().database.username,
+      password: config().database.password,
+      database: config().database.database,
+      entities: [__dirname + '/**/*.entity{.js, .ts}'],
+      synchronize: config().database.synchronize,
     }),
   ],
 
