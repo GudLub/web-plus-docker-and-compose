@@ -29,7 +29,7 @@ export class AuthService {
     try {
       const payload = { sub: user.id };
       const secret =
-        this.configService.get<string>('JWT_KEY') || 'SOME_JWT_KEY';
+        this.configService.get<string>('JWT_SECRET');
       return { access_token: this.jwtService.sign(payload, { secret }) };
     } catch (error) {
       throw new InternalServerErrorException('Server error');
